@@ -1,1595 +1,423 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Livret d'accueil · L'Officine</title>
-  <link rel="icon" type="image/png" href="/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-  <style>
-    /* ─────────────────────────────────────────────────────────────
-      L’OFFICINE · LIVRET — Design hôtellerie haut de gamme
-      - Header premium (logo + navigation + panier)
-      - Splash (image accrocheuse) au chargement
-      - Navigation fluide + progression + ancre douce
-      - Section Extras (cards + mini-panier)
-      - 100% statique, Netlify-friendly (index.html)
-    ───────────────────────────────────────────────────────────── */
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body, html { overflow-x: hidden; }
-    button, input { font: inherit; }
-
-    :root{
-      /* Palette chic & épurée */
-      --bg: #07070A;
-      --panel: rgba(255,255,255,0.045);
-      --panel-2: rgba(255,255,255,0.035);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.64);
-      --soft: rgba(255,255,255,0.38);
-      --border: rgba(255,255,255,0.12);
-
-      /* Accent “signature” */
-      --accent: #C8111F;
-      --accent-2: #A00E19;
-      --accent-3: #E01020;
-
-      /* Layout */
-      --max: 980px;
-      --radius: 18px;
-      --radius-lg: 22px;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --shadow-soft: 0 14px 40px rgba(0,0,0,.28);
-      --ring: 0 0 0 4px rgba(200,17,31,0.18);
-
-      /* Header heights */
-      --topbar-h: 64px;
-    }
-
-    body{
-      font-family: "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 15% 0%, rgba(200,17,31,0.12), transparent 55%),
-                  radial-gradient(900px 600px at 85% 10%, rgba(255,255,255,0.05), transparent 52%),
-                  var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ───────────────────────── Splash ───────────────────────── */
-    .splash{
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: grid;
-      place-items: center;
-      background: #050507;
-      transition: opacity .7s ease, transform .7s ease;
-    }
-    .splash.is-hidden{
-      opacity: 0;
-      transform: scale(1.01);
-      pointer-events: none;
-    }
-    .splash-media{
-      position: absolute;
-      inset: 0;
-      background: url("IMG_9904.JPG") center/cover no-repeat;
-      filter: saturate(1.05) contrast(1.02);
-      transform: scale(1.04);
-    }
-    .splash-overlay{
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(5,5,7,0.25) 0%, rgba(5,5,7,0.65) 55%, rgba(5,5,7,0.98) 100%),
-        radial-gradient(900px 600px at 50% 20%, rgba(200,17,31,0.20), transparent 55%);
-    }
-    .splash-card{
-      position: relative;
-      width: min(820px, calc(100% - 36px));
-      border-radius: 26px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(6,6,8,0.68);
-      backdrop-filter: blur(16px);
-      box-shadow: var(--shadow);
-      padding: 26px 24px 22px;
-      overflow: hidden;
-    }
-    .splash-card::before{
-      content:"";
-      position:absolute;
-      inset:-1px;
-      background: linear-gradient(135deg, rgba(200,17,31,0.22), rgba(255,255,255,0.06), rgba(200,17,31,0.10));
-      opacity: .55;
-      pointer-events:none;
-      mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
-      -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
-      padding: 1px;
-      border-radius: 26px;
-    }
-    .splash-inner{
-      position: relative;
-      display: grid;
-      gap: 14px;
-      justify-items: center;
-      text-align: center;
-    }
-    .brand-pill{
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-      color: rgba(255,255,255,0.82);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      font-size: .70rem;
-      font-weight: 700;
-    }
-    .brand-dot{
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow: 0 0 0 6px rgba(200,17,31,0.10);
-    }
-    .splash-title{
-      font-family: "Playfair Display", serif;
-      font-size: clamp(2.2rem, 6vw, 3.6rem);
-      letter-spacing: 0.01em;
-      line-height: 1.05;
-    }
-    .splash-title em{ font-style: italic; color: rgba(255,255,255,0.72); }
-    .splash-sub{
-      color: var(--muted);
-      font-weight: 400;
-      line-height: 1.7;
-      max-width: 54ch;
-      font-size: 1.02rem;
-    }
-    .splash-actions{
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 6px;
-    }
-    .btn{
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.05);
-      color: rgba(255,255,255,0.86);
-      border-radius: 999px;
-      padding: 12px 18px;
-      cursor: pointer;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      transition: transform .14s ease, background .14s ease, border-color .14s ease, filter .14s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      user-select: none;
-    }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.22); }
-    .btn:focus{ outline: none; box-shadow: var(--ring); }
-    .btn-primary{
-      border-color: rgba(200,17,31,0.38);
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #fff;
-      box-shadow: 0 16px 44px rgba(200,17,31,0.18);
-    }
-    .btn-primary:hover{ filter: brightness(1.05); }
-
-    /* ───────────────────────── Layout ───────────────────────── */
-    .wrap{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 0 20px 90px;
-    }
-
-    /* ───────────────────────── Topbar ───────────────────────── */
-    .topbar{
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      height: var(--topbar-h);
-      display: flex;
-      align-items: center;
-      background: rgba(7,7,10,0.74);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .topbar-inner{
-      width: min(var(--max), calc(100% - 40px));
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Brand */
-    .brand{
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-      text-decoration: none;
-      color: inherit;
-    }
-    .brand-logo{
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      flex: 0 0 auto;
-    }
-    .brand-logo img{ width: 100%; height: 100%; object-fit: cover; display:block; }
-    .brand-text{
-      display: grid;
-      gap: 2px;
-      min-width: 0;
-    }
-    .brand-text strong{
-      font-family: "Playfair Display", serif;
-      font-size: 1.08rem;
-      letter-spacing: 0.01em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .brand-text span{
-      font-size: .72rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.55);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Center nav */
-    .nav{
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.035);
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .nav::-webkit-scrollbar{ display:none; }
-    .nav a{
-      text-decoration: none;
-      color: rgba(255,255,255,0.70);
-      font-size: .83rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      padding: 10px 12px;
-      border-radius: 999px;
-      transition: background .14s ease, color .14s ease, transform .14s ease;
-      white-space: nowrap;
-      flex: 0 0 auto;
-    }
-    .nav a:hover{ background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.92); }
-    .nav a.active{
-      background: rgba(200,17,31,0.14);
-      color: rgba(255,255,255,0.96);
-      border: 1px solid rgba(200,17,31,0.24);
-    }
-
-    /* Right actions (panier) */
-    .actions{
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-    .icon-btn{
-      height: 40px;
-      padding: 0 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-      color: rgba(255,255,255,0.86);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      letter-spacing: .02em;
-      transition: background .14s ease, transform .14s ease, border-color .14s ease;
-      user-select: none;
-    }
-    .icon-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.20); }
-    .icon{
-      width: 18px; height: 18px; display:inline-block;
-    }
-    .badge{
-      min-width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      padding: 0 8px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #fff;
-      font-size: .75rem;
-      font-weight: 900;
-      box-shadow: 0 10px 30px rgba(200,17,31,0.20);
-    }
-
-    /* ───────────────────────── Hero (splash-like inside page) ───────────────────────── */
-    .hero{
-      position: relative;
-      margin-top: 22px;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-      box-shadow: var(--shadow-soft);
-      min-height: 360px;
-    }
-    .hero-media{
-      position:absolute; inset:0;
-      background: url("IMG_9904.JPG") center/cover no-repeat;
-      transform: scale(1.02);
-      filter: saturate(1.05) contrast(1.02);
-    }
-    .hero-overlay{
-      position:absolute; inset:0;
-      background:
-        radial-gradient(900px 520px at 20% 18%, rgba(200,17,31,0.18), transparent 60%),
-        linear-gradient(90deg, rgba(7,7,10,0.92) 0%, rgba(7,7,10,0.70) 40%, rgba(7,7,10,0.40) 68%, rgba(7,7,10,0.22) 100%),
-        linear-gradient(180deg, rgba(7,7,10,0.12) 0%, rgba(7,7,10,0.72) 92%, rgba(7,7,10,0.96) 100%);
-    }
-    .hero-content{
-      position: relative;
-      padding: 34px 28px;
-      display: grid;
-      gap: 12px;
-      max-width: 720px;
-    }
-    .hero-kicker{
-      display:flex; align-items:center; gap:10px;
-      color: rgba(255,255,255,0.70);
-      text-transform: uppercase;
-      letter-spacing: .20em;
-      font-weight: 800;
-      font-size: .72rem;
-    }
-    .hero-kicker::before{
-      content:"";
-      width: 30px;
-      height: 1px;
-      background: rgba(255,255,255,0.28);
-    }
-    .hero h1{
-      font-family: "Playfair Display", serif;
-      font-size: clamp(2.1rem, 4vw, 3.2rem);
-      line-height: 1.08;
-      letter-spacing: 0.01em;
-    }
-    .hero h1 em{ font-style: italic; color: rgba(255,255,255,0.74); }
-    .hero p{
-      color: var(--muted);
-      line-height: 1.8;
-      font-size: 1.02rem;
-      max-width: 60ch;
-    }
-    .hero-cta{
-      margin-top: 8px;
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    /* ───────────────────────── Sections ───────────────────────── */
-    .section{
-      padding-top: 60px;
-      scroll-margin-top: calc(var(--topbar-h) + 16px);
-    }
-
-    .section-head{
-      display:flex;
-      align-items:flex-end;
-      justify-content: space-between;
-      gap: 14px;
-      margin: 26px 0 18px;
-    }
-    .section-title{
-      display:grid;
-      gap: 6px;
-    }
-    .section-title small{
-      color: rgba(255,255,255,0.55);
-      letter-spacing: .20em;
-      text-transform: uppercase;
-      font-weight: 800;
-      font-size: .72rem;
-    }
-    .section-title h2{
-      font-family: "Playfair Display", serif;
-      font-size: 1.6rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-    }
-    .section-chip{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.72);
-      font-weight: 700;
-      font-size: .84rem;
-      white-space: nowrap;
-    }
-
-    .grid-2{
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 14px;
-    }
-    @media (max-width: 900px){
-      .topbar-inner{ grid-template-columns: 1fr auto; }
-      .nav{ display:none; }
-      .grid-2{ grid-template-columns: 1fr; }
-    }
-
-    .card{
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.035);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: 0 14px 40px rgba(0,0,0,.18);
-    }
-    .card h3{
-      font-family: "Playfair Display", serif;
-      font-size: 1.05rem;
-      margin-bottom: 8px;
-      letter-spacing: 0.01em;
-    }
-    .card p, .card li{
-      color: var(--muted);
-      line-height: 1.75;
-      font-size: .97rem;
-    }
-    .card ul, .card ol{
-      padding-left: 18px;
-      display:grid;
-      gap: 7px;
-      margin-top: 8px;
-    }
-
-    .info{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    @media (max-width: 780px){ .info{ grid-template-columns: 1fr 1fr; } }
-    .kpi{
-      border-radius: var(--radius);
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      padding: 16px;
-      display:grid;
-      gap: 6px;
-    }
-    .kpi .label{
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-weight: 800;
-      font-size: .68rem;
-      color: rgba(255,255,255,0.46);
-    }
-    .kpi .value{
-      font-family:"Playfair Display", serif;
-      font-size: 1.35rem;
-      color: rgba(255,255,255,0.92);
-    }
-    .kpi .value.accent{ color: var(--accent-3); }
-
-    /* Gallery */
-    .gallery{
-      display:grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-    }
-    @media (max-width: 900px){ .gallery{ grid-template-columns: repeat(3, 1fr); } }
-    .g-item{
-      aspect-ratio: 1;
-      border-radius: 14px;
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-      cursor: pointer;
-      position:relative;
-    }
-    .g-item img{
-      width:100%; height:100%;
-      object-fit: cover;
-      display:block;
-      transition: transform .45s ease;
-    }
-    .g-item:hover img{ transform: scale(1.06); }
-    .g-item::after{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(300px 220px at 20% 20%, rgba(200,17,31,0.18), transparent 55%),
-                  linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.28) 100%);
-      opacity: .6;
-      pointer-events:none;
-    }
-
-    /* Steps */
-    .steps{ display:grid; gap: 10px; }
-    .step{
-      display:grid;
-      grid-template-columns: 40px 1fr;
-      gap: 14px;
-      align-items:flex-start;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-    }
-    .step .num{
-      width: 34px; height: 34px;
-      border-radius: 999px;
-      display:grid; place-items:center;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      font-weight: 900;
-      box-shadow: 0 12px 34px rgba(200,17,31,0.16);
-    }
-    .step .ttl{ font-weight: 900; }
-    .step p{ margin-top: 4px; color: var(--muted); line-height: 1.7; font-size: .93rem; }
-
-    /* Wifi */
-    .wifi{
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      border-radius: var(--radius);
-      padding: 18px;
-      display:grid;
-      gap: 12px;
-    }
-    .wifi-row{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .wifi-meta{ display:grid; gap: 4px; }
-    .wifi-meta .label{
-      color: rgba(255,255,255,0.44);
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-weight: 900;
-      font-size: .66rem;
-    }
-    .wifi-meta .val{
-      font-family:"Playfair Display", serif;
-      font-size: 1.25rem;
-    }
-
-    /* Rules */
-    .rules{ display:grid; gap: 10px; }
-    .rule{
-      display:flex;
-      gap: 12px;
-      align-items:flex-start;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-    }
-    .dot{
-      width: 10px; height: 10px; border-radius: 999px;
-      background: var(--accent);
-      margin-top: 7px;
-      box-shadow: 0 0 0 6px rgba(200,17,31,0.10);
-      flex: 0 0 auto;
-    }
-    .rule p{ color: var(--muted); line-height: 1.7; }
-    .rule strong{ color: rgba(255,255,255,0.90); }
-
-    /* Places */
-    .places{ display:grid; gap: 10px; }
-    .place{
-      display:flex;
-      gap: 12px;
-      align-items:center;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-    }
-    .p-emoji{ font-size: 1.2rem; }
-    .p-info{ flex: 1; min-width: 0; display:grid; gap: 2px; }
-    .p-name{ font-weight: 900; }
-    .p-detail{ color: var(--muted); font-size: .86rem; }
-    .p-dist{ color: rgba(255,255,255,0.42); font-size: .80rem; white-space: nowrap; }
-
-    /* Contacts */
-    .contacts{ display:grid; gap: 10px; }
-    .contact{
-      display:flex;
-      align-items:center;
-      gap: 14px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      text-decoration:none;
-      color: inherit;
-      transition: transform .14s ease, background .14s ease, border-color .14s ease;
-    }
-    .contact:hover{
-      transform: translateY(-1px);
-      background: rgba(200,17,31,0.05);
-      border-color: rgba(200,17,31,0.22);
-    }
-    .c-ico{
-      width: 40px; height: 40px;
-      border-radius: 14px;
-      display:grid; place-items:center;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-      flex: 0 0 auto;
-    }
-    .c-meta{ display:grid; gap: 3px; min-width: 0; }
-    .c-name{ font-weight: 900; }
-    .c-detail{ color: var(--muted); font-size: .86rem; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .c-arrow{ margin-left:auto; color: rgba(255,255,255,0.38); font-weight: 900; }
-
-    /* ───────────────────────── Extras / Shop ───────────────────────── */
-    .extras-grid{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 14px;
-      align-items:start;
-    }
-    @media (max-width: 900px){ .extras-grid{ grid-template-columns: 1fr; } }
-
-    .product-grid{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    @media (max-width: 720px){ .product-grid{ grid-template-columns: 1fr; } }
-
-    .product{
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      border-radius: var(--radius);
-      overflow:hidden;
-      display:grid;
-      grid-template-columns: 120px 1fr;
-      gap: 0;
-    }
-    .product .media{
-      background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      border-right: 1px solid rgba(255,255,255,0.08);
-      display:grid;
-      place-items:center;
-      min-height: 120px;
-      font-size: 1.6rem;
-    }
-    .product .body{
-      padding: 14px 14px 12px;
-      display:grid;
-      gap: 8px;
-    }
-    .product .name{
-      font-weight: 900;
-      letter-spacing: .01em;
-    }
-    .product .desc{
-      color: var(--muted);
-      font-size: .88rem;
-      line-height: 1.6;
-    }
-    .product .row{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 2px;
-    }
-    .price{
-      font-family:"Playfair Display", serif;
-      font-size: 1.15rem;
-    }
-    .add{
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(200,17,31,0.35);
-      background: rgba(200,17,31,0.10);
-      color: rgba(255,255,255,0.90);
-      font-weight: 900;
-      cursor:pointer;
-      transition: transform .14s ease, background .14s ease, border-color .14s ease;
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      white-space: nowrap;
-    }
-    .add:hover{ transform: translateY(-1px); background: rgba(200,17,31,0.16); border-color: rgba(200,17,31,0.50); }
-
-    .cart{
-      position: sticky;
-      top: calc(var(--topbar-h) + 14px);
-    }
-    .cart-head{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .cart-head h3{
-      font-family: "Playfair Display", serif;
-      font-size: 1.1rem;
-    }
-    .cart-list{ display:grid; gap: 10px; }
-    .cart-item{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-    }
-    .cart-item .left{ display:grid; gap: 2px; min-width:0; }
-    .cart-item .ttl{ font-weight: 900; white-space: nowrap; overflow:hidden; text-overflow: ellipsis; }
-    .cart-item .sub{ color: rgba(255,255,255,0.55); font-size: .82rem; }
-    .qty{
-      display:flex; align-items:center; gap: 8px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.02);
-      border-radius: 999px;
-      padding: 6px 10px;
-    }
-    .qty button{
-      width: 28px; height: 28px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.86);
-      cursor:pointer;
-      font-weight: 900;
-      transition: background .14s ease;
-    }
-    .qty button:hover{ background: rgba(255,255,255,0.06); }
-    .qty span{ width: 18px; text-align:center; font-weight: 900; }
-
-    .cart-foot{
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.10);
-      display:grid;
-      gap: 10px;
-    }
-    .total{
-      display:flex; align-items:center; justify-content: space-between;
-      font-weight: 900;
-    }
-    .total strong{
-      font-family:"Playfair Display", serif;
-      font-size: 1.2rem;
-    }
-    .checkout{
-      width: 100%;
-      justify-content: center;
-    }
-    .muted-note{
-      color: rgba(255,255,255,0.52);
-      font-size: .85rem;
-      line-height: 1.6;
-    }
-
-    /* ───────────────────────── Modal (panier mobile) ───────────────────────── */
-    .modal{
-      position: fixed;
-      inset: 0;
-      z-index: 3000;
-      display:none;
-      align-items:flex-end;
-      justify-content: center;
-      background: rgba(0,0,0,0.55);
-      padding: 18px;
-    }
-    .modal.open{ display:flex; }
-    .sheet{
-      width: min(720px, 100%);
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(7,7,10,0.88);
-      backdrop-filter: blur(16px);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .sheet-head{
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .sheet-head strong{ font-family:"Playfair Display", serif; font-size: 1.05rem; }
-    .close{
-      height: 38px;
-      padding: 0 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.03);
-      color: rgba(255,255,255,0.86);
-      cursor:pointer;
-      font-weight: 900;
-    }
-    .sheet-body{ padding: 14px 16px 16px; }
-
-    /* ───────────────────────── Footer ───────────────────────── */
-    footer{
-      margin-top: 70px;
-      padding: 34px 20px;
-      border-top: 1px solid rgba(255,255,255,0.10);
-      text-align:center;
-      color: rgba(255,255,255,0.50);
-      line-height: 1.9;
-      font-size: .86rem;
-    }
-    footer strong{ color: rgba(255,255,255,0.72); }
-
-    /* Hide cart desktop on small */
-    @media (max-width: 900px){
-      .cart{ position: static; }
-      .cart.desktop{ display:none; }
-      .icon-btn .label{ display:none; }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clemenceau — Livret d'Accueil</title>
+  <meta name="description" content="Livret d'accueil digital de l'appartement Clemenceau.">
+  <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-  <!-- SPLASH (image accrocheuse au chargement) -->
-  <div class="splash" id="splash" aria-hidden="false">
-    <div class="splash-media" role="img" aria-label="Ambiance L'Officine"></div>
-    <div class="splash-overlay"></div>
+<!-- ═══════════════════════════════ NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-mark">C</div>
+    <div>
+      <div class="logo-name">Clemenceau</div>
+      <div class="logo-tagline">Livret d'accueil</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="#contact" class="nav-contact-btn">Nous contacter</a>
+  </div>
+</nav>
 
-    <div class="splash-card" role="dialog" aria-modal="true" aria-label="Bienvenue">
-      <div class="splash-inner">
-        <div class="brand-pill"><span class="brand-dot"></span> Livret d’accueil</div>
-        <div class="splash-title">L’Officine <em>Balnéo & Pièce secrète</em></div>
-        <div class="splash-sub">
-          Un espace conçu pour l’intimité, le confort et l’évasion.
-          Tout est ici : accès, Wi-Fi, règles, bonnes adresses… et vos <strong style="color:rgba(255,255,255,0.92);">extras</strong>.
-        </div>
-        <div class="splash-actions">
-          <button class="btn btn-primary" id="enterBtn" type="button">
-            Entrer
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14"/><path d="M13 5l7 7-7 7"/>
-            </svg>
-          </button>
-          <a class="btn" href="#extras" onclick="hideSplashAndScrollTo('extras')">
-            Voir les extras
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 5v14"/><path d="M5 12l7 7 7-7"/>
-            </svg>
-          </a>
-        </div>
+<!-- ═══════════════════════════════ HERO -->
+<header class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Appartement · Livret d'accueil</p>
+    <h1>Bienvenue<br><em>chez vous</em></h1>
+    <p class="hero-desc">Toutes les informations utiles pour votre séjour dans l'appartement Clemenceau. N'hésitez pas à nous contacter pour toute question.</p>
+    <div class="hero-meta-row">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Arrivée</span>
+        <span class="hero-meta-value">Dès 15h00</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Départ</span>
+        <span class="hero-meta-value">Avant 11h00</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Étage</span>
+        <span class="hero-meta-value">[N° étage]</span>
       </div>
     </div>
   </div>
-
-  <!-- TOPBAR (logo + nav + panier) -->
-  <header class="topbar">
-    <div class="topbar-inner">
-
-      <a class="brand" href="#top" aria-label="Retour en haut">
-        <div class="brand-logo">
-          <!-- Mets ton logo ici (logo.png) ou garde l’emoji -->
-          <!-- <img src="logo.png" alt="L'Officine"> -->
-          <span style="font-size:18px;opacity:.9;">✦</span>
-        </div>
-        <div class="brand-text">
-          <strong>L’Officine</strong>
-          <span>Livret d’accueil</span>
-        </div>
-      </a>
-
-      <nav class="nav" aria-label="Navigation principale">
-        <a href="#bienvenue">Bienvenue</a>
-        <a href="#acces">Accès</a>
-        <a href="#logement">Logement</a>
-        <a href="#wifi">Wi-Fi</a>
-        <a href="#regles">Règles</a>
-        <a href="#autour">Autour</a>
-        <a href="#contact">Contact</a>
-        <a href="#extras">Extras</a>
-      </nav>
-
-      <div class="actions">
-        <button class="icon-btn" id="openCartBtn" type="button" aria-label="Ouvrir le panier">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 6h15l-2 9H7L6 6Z"/><path d="M6 6 5 3H2"/><path d="M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/><path d="M17 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
-          </svg>
-          <span class="label">Panier</span>
-          <span class="badge" id="cartCount">0</span>
-        </button>
+  <div class="hero-right" data-initial="C">
+    <div class="hero-quick-info">
+      <div class="quick-info-title">Infos rapides</div>
+      <div class="quick-info-row">
+        <span class="quick-info-key">Adresse</span>
+        <span class="quick-info-val">Rue Clemenceau</span>
       </div>
-
+      <div class="quick-info-row">
+        <span class="quick-info-key">WiFi</span>
+        <span class="quick-info-val">Clemenceau_WiFi</span>
+      </div>
+      <div class="quick-info-row">
+        <span class="quick-info-key">Digicode</span>
+        <span class="quick-info-val">[CODE]</span>
+      </div>
+      <div class="quick-info-row">
+        <span class="quick-info-key">Urgences</span>
+        <span class="quick-info-val">+33 X XX XX XX XX</span>
+      </div>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main class="wrap" id="top">
+<!-- ═══════════════════════════════ LAYOUT -->
+<div class="page-layout">
 
-    <!-- HERO -->
-    <section class="hero" aria-label="En-tête">
-      <div class="hero-media"></div>
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <div class="hero-kicker">Bienvenue</div>
-        <h1>L’Officine <em>Balnéo & Pièce secrète</em></h1>
-        <p>
-          Tout ce qu’il vous faut, en un seul endroit : accès, Wi-Fi, règles, bonnes adresses…
-          Et pour sublimer votre séjour, découvrez nos <strong style="color:rgba(255,255,255,0.90);">extras</strong>.
-        </p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="#acces">
-            Accéder au logement
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 5v14"/><path d="M5 12l7 7 7-7"/>
-            </svg>
-          </a>
-          <a class="btn" href="#extras">
-            Commander un extra
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 6h15l-2 9H7L6 6Z"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-    </section>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <p class="sidebar-title">Navigation</p>
+    <ul class="sidebar-nav">
+      <li><a href="#acces"><span class="s-icon">🗝</span> Accès</a></li>
+      <li><a href="#wifi"><span class="s-icon">📶</span> WiFi</a></li>
+      <li><a href="#parking"><span class="s-icon">🚗</span> Parking</a></li>
+      <li><a href="#poubelles"><span class="s-icon">♻️</span> Poubelles</a></li>
+      <li><a href="#checklist"><span class="s-icon">✅</span> Check-list</a></li>
+      <li><a href="#photos"><span class="s-icon">📷</span> Photos</a></li>
+      <li><a href="#contact"><span class="s-icon">💬</span> Contact</a></li>
+    </ul>
+  </aside>
 
-    <!-- BIENVENUE -->
-    <section class="section" id="bienvenue">
-      <div class="section-head">
-        <div class="section-title">
-          <small>01 · Bienvenue</small>
-          <h2>Un séjour qui vous ressemble</h2>
-        </div>
-        <div class="section-chip">✦ Check-in 17h · Check-out 10h</div>
-      </div>
+  <!-- CONTENT -->
+  <main class="content-area">
 
-      <div class="info">
-        <div class="kpi"><div class="label">Arrivée</div><div class="value">17h00</div></div>
-        <div class="kpi"><div class="label">Départ</div><div class="value">10h00</div></div>
-        <div class="kpi"><div class="label">Capacité</div><div class="value">2 pers.</div></div>
-        <div class="kpi"><div class="label">Superficie</div><div class="value accent">∼ 60 m²</div></div>
-      </div>
-
-      <div style="height:14px;"></div>
-
-      <div class="card">
-        <h3>Merci de nous faire confiance</h3>
-        <p>
-          Nous sommes ravis de vous accueillir à L’Officine — un espace pensé pour l’intimité, le plaisir et l’évasion.
-          Ce livret contient tout ce dont vous avez besoin pour profiter pleinement de votre séjour.
-          Pour la moindre question, contactez-nous : nous répondons rapidement.
-        </p>
-      </div>
-    </section>
-
-    <!-- ACCÈS -->
+    <!-- ── ACCÈS ── -->
     <section class="section" id="acces">
-      <div class="section-head">
-        <div class="section-title">
-          <small>02 · Accès</small>
-          <h2>Comment entrer</h2>
-        </div>
-        <div class="section-chip">🔑 Entrée autonome</div>
+      <div class="section-header">
+        <div class="section-label">01 — Arrivée</div>
+        <h2>Accès au logement</h2>
       </div>
 
-      <div class="grid-2">
-        <div class="card">
-          <h3>Étapes d’arrivée</h3>
-          <div class="steps" style="margin-top:10px;">
-            <div class="step">
-              <div class="num">1</div>
-              <div>
-                <div class="ttl">Adresse du logement</div>
-                <p>XX Rue de l’Officine, XXXXX Ville<br><span style="color:rgba(255,255,255,0.45);font-size:.84rem;">→ Remplacez par votre adresse exacte</span></p>
-              </div>
-            </div>
-            <div class="step">
-              <div class="num">2</div>
-              <div>
-                <div class="ttl">Boîte à clés</div>
-                <p>À l’entrée. Code : <strong style="color:rgba(255,255,255,0.92);">XXXX</strong><br><span style="color:rgba(255,255,255,0.45);font-size:.84rem;">→ Remplacez par votre code</span></p>
-              </div>
-            </div>
-            <div class="step">
-              <div class="num">3</div>
-              <div>
-                <div class="ttl">Entrée dans le logement</div>
-                <p>Montez au <strong style="color:rgba(255,255,255,0.92);">2ème étage</strong>, appartement face à l’ascenseur. Utilisez la clé.</p>
-              </div>
-            </div>
-            <div class="step">
-              <div class="num">4</div>
-              <div>
-                <div class="ttl">Parking</div>
-                <p>Parking gratuit dans la rue ou au parking public à 200m.</p>
-              </div>
-            </div>
+      <div class="alert">
+        <span class="alert-icon">📍</span>
+        <div>
+          <strong>Adresse complète</strong>
+          [Numéro] Rue Clemenceau, [Code Postal] [Ville]
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Portail / Digicode</h3>
+            <p>Tapez le code <strong>[CODE]</strong> sur le clavier à droite du portail, puis appuyez sur la touche verte.</p>
           </div>
         </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Hall d'entrée & ascenseur</h3>
+            <p>Traversez le hall et prenez l'ascenseur (ou les escaliers) jusqu'au <strong>[N°] étage</strong>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Boîte à clés</h3>
+            <p>La boîte à clés est fixée [emplacement précis : mur à gauche de la porte / rampe…]. Code : <strong>[CODE]</strong>. Tournez le cadran et tirez le tiroir.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Vous êtes chez vous !</h3>
+            <p>Laissez les clés dans la boîte à votre départ. Le livret papier se trouve [sur la table basse / dans l'entrée].</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <div class="card">
-          <h3>Carte & repères</h3>
-          <p style="margin-bottom:10px;">Intégrez ici votre carte Google Maps (Maps → Partager → Intégrer une carte → copier l’iframe).</p>
-          <div style="height:12px;"></div>
-          <div style="border:1px solid rgba(255,255,255,0.10); border-radius:16px; overflow:hidden; background:rgba(255,255,255,0.02); height: 240px; display:grid; place-items:center; color:rgba(255,255,255,0.45);">
-            📍 Collez l’iframe Google Maps ici
+    <!-- ── WIFI ── -->
+    <section class="section" id="wifi">
+      <div class="section-header">
+        <div class="section-label">02 — Connectivité</div>
+        <h2>WiFi</h2>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-label">Réseau (SSID)</div>
+          <div class="info-value">Clemenceau_WiFi</div>
+          <div class="info-note">2.4 GHz & 5 GHz disponibles</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Mot de passe</div>
+          <div class="info-value" style="font-size:1.3rem;">[MotDePasse]</div>
+          <div class="info-note">Sensible à la casse</div>
+        </div>
+      </div>
+
+      <div class="alert">
+        <span class="alert-icon">💡</span>
+        <div>
+          <strong>Problème de connexion ?</strong>
+          Le routeur se trouve [emplacement, ex: meuble TV]. Éteignez-le 30 secondes, puis rallumez. Si le problème persiste, contactez-nous.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PARKING ── -->
+    <section class="section" id="parking">
+      <div class="section-header">
+        <div class="section-label">03 — Stationnement</div>
+        <h2>Se garer</h2>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">🅿</div>
+          <div class="step-body">
+            <h3>Place réservée / Parking privé</h3>
+            <p>[Décrivez ici : ex. "Une place vous est réservée au sous-sol, numéro 12. Le badge est dans l'appartement, sur le plan de travail."]</p>
           </div>
-          <!-- Exemple :
-          <div style="margin-top:12px; border-radius:16px; overflow:hidden;">
-            <iframe src="..." width="100%" height="240" style="border:0" loading="lazy"></iframe>
+        </div>
+        <div class="step">
+          <div class="step-num">🏙</div>
+          <div class="step-body">
+            <h3>Stationnement de rue</h3>
+            <p>[Ex. "La rue Clemenceau est en zone [couleur]. Stationnement gratuit le dimanche et après 19h. Zone payante du lundi au samedi 9h–19h."]</p>
           </div>
+        </div>
+        <div class="step">
+          <div class="step-num">P</div>
+          <div class="step-body">
+            <h3>Parking public le plus proche</h3>
+            <p>[Nom du parking], [adresse] — environ [X] minutes à pied. Tarif indicatif : [X€/h].</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem">
+        <div class="map-wrapper">
+          <!-- CARTE GOOGLE MAPS
+               Remplacez l'URL ci-dessous par votre adresse :
+               https://maps.google.com/maps?q=VOTRE+ADRESSE&output=embed
+          -->
+          <div class="map-placeholder">
+            <div class="map-icon">🗺️</div>
+            <p>Intégrez votre carte Google Maps ici</p>
+            <code>Remplacer ce div par un &lt;iframe&gt; Google Maps</code>
+          </div>
+          <!--
+          <iframe
+            src="https://maps.google.com/maps?q=Rue+Clemenceau+VOTRE_VILLE&output=embed"
+            allowfullscreen loading="lazy">
+          </iframe>
           -->
         </div>
       </div>
     </section>
 
-    <!-- LOGEMENT -->
-    <section class="section" id="logement">
-      <div class="section-head">
-        <div class="section-title">
-          <small>03 · Le logement</small>
-          <h2>Ambiance, équipements & confort</h2>
-        </div>
-        <div class="section-chip">🛁 Balnéo · 🎵 Audio · 📺 Smart TV</div>
+    <!-- ── POUBELLES ── -->
+    <section class="section" id="poubelles">
+      <div class="section-header">
+        <div class="section-label">04 — Tri sélectif</div>
+        <h2>Gestion des poubelles</h2>
       </div>
 
-      <div class="gallery" aria-label="Galerie">
-        <div class="g-item"><img src="IMG_9904.JPG" alt="Pièce principale" loading="lazy"></div>
-        <div class="g-item"><img src="IMG_8312.jpg" alt="Balnéo" loading="lazy"></div>
-        <div class="g-item"><img src="IMG_8657.JPG" alt="Détail" loading="lazy"></div>
-        <div class="g-item"><img src="IMG_8660.JPG" alt="Ambiance" loading="lazy"></div>
-        <div class="g-item"><img src="IMG_8673.JPG" alt="Chambre" loading="lazy"></div>
-        <div class="g-item"><img src="IMG_9166.jpg" alt="Vue" loading="lazy"></div>
+      <div class="info-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="info-card">
+          <div class="info-label">🟡 Bac jaune</div>
+          <div class="info-value" style="font-size:1rem;margin-bottom:0.4rem">Recyclables</div>
+          <div class="info-note">Plastiques, cartons, métal, papier</div>
+          <div class="info-note" style="margin-top:0.5rem;font-weight:500;color:var(--dark)">Sortie : [jour] soir</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">🟢 Colonne verre</div>
+          <div class="info-value" style="font-size:1rem;margin-bottom:0.4rem">Verre uniquement</div>
+          <div class="info-note">Bouteilles, bocaux, pots (sans bouchons)</div>
+          <div class="info-note" style="margin-top:0.5rem;font-weight:500;color:var(--dark)">[Emplacement colonne]</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">⚫ Bac gris</div>
+          <div class="info-value" style="font-size:1rem;margin-bottom:0.4rem">Ordures ménagères</div>
+          <div class="info-note">Tout ce qui ne se recycle pas</div>
+          <div class="info-note" style="margin-top:0.5rem;font-weight:500;color:var(--dark)">Sortie : [jour] soir</div>
+        </div>
       </div>
 
-      <div style="height:14px;"></div>
-
-      <div class="grid-2">
-        <div class="card">
-          <h3>Balnéo</h3>
-          <p>Réglez la température via le panneau de commande. Recommandée : <strong style="color:rgba(255,255,255,0.92);">38–40°C</strong>. Pensez à éteindre après usage.</p>
-          <div style="height:10px;"></div>
-          <h3>Éclairage & ambiance</h3>
-          <p>Lumières pilotables via interrupteurs ou télécommande. Plusieurs scènes d’ambiance disponibles.</p>
-        </div>
-        <div class="card">
-          <h3>Musique</h3>
-          <p>Enceinte Bluetooth disponible. Connexion : <strong style="color:rgba(255,255,255,0.92);">Officine-Sound</strong> — aucun code requis.</p>
-          <div style="height:10px;"></div>
-          <h3>Télévision</h3>
-          <p>Accès Netflix, Prime Video et YouTube via la Smart TV. Pensez à vous déconnecter avant de partir.</p>
+      <div class="alert">
+        <span class="alert-icon">📍</span>
+        <div>
+          <strong>Où sont les poubelles ?</strong>
+          [Emplacement précis : ex. "Local poubelles au rez-de-chaussée, à gauche en entrant. Code du local : [CODE]."]. Merci de ne jamais laisser de sacs dans le couloir ou les parties communes.
         </div>
       </div>
     </section>
 
-    <!-- WIFI -->
-    <section class="section" id="wifi">
-      <div class="section-head">
-        <div class="section-title">
-          <small>04 · Wi-Fi</small>
-          <h2>Connexion internet</h2>
-        </div>
-        <div class="section-chip">📶 Copier en 1 clic</div>
+    <!-- ── CHECKLIST ── -->
+    <section class="section" id="checklist">
+      <div class="section-header">
+        <div class="section-label">05 — Arrivée</div>
+        <h2>Check-list d'arrivée</h2>
       </div>
 
-      <div class="wifi">
-        <div class="wifi-row">
-          <div class="wifi-meta">
-            <div class="label">Réseau</div>
-            <div class="val" id="wifiSsid">L-Officine</div>
-          </div>
-          <button class="btn" type="button" onclick="copyText(document.getElementById('wifiSsid').textContent, this)">Copier</button>
+      <div class="checklist" id="cl">
+        <div class="check-item" onclick="toggle(this,'cl')">
+          <div class="check-box"></div>
+          <span class="check-label">J'ai récupéré les clés dans la boîte à clés</span>
         </div>
-        <div class="wifi-row">
-          <div class="wifi-meta">
-            <div class="label">Mot de passe</div>
-            <div class="val" id="wifiPwd">officine2024</div>
-          </div>
-          <button class="btn" type="button" onclick="copyText(document.getElementById('wifiPwd').textContent, this)">Copier</button>
+        <div class="check-item" onclick="toggle(this,'cl')">
+          <div class="check-box"></div>
+          <span class="check-label">Je me suis connecté(e) au WiFi</span>
+        </div>
+        <div class="check-item" onclick="toggle(this,'cl')">
+          <div class="check-box"></div>
+          <span class="check-label">J'ai vérifié l'état général de l'appartement</span>
+        </div>
+        <div class="check-item" onclick="toggle(this,'cl')">
+          <div class="check-box"></div>
+          <span class="check-label">J'ai repéré le local poubelles</span>
+        </div>
+        <div class="check-item" onclick="toggle(this,'cl')">
+          <div class="check-box"></div>
+          <span class="check-label">J'ai garé mon véhicule correctement</span>
+        </div>
+        <div class="check-item" onclick="toggle(this,'cl')">
+          <div class="check-box"></div>
+          <span class="check-label">J'ai noté le numéro d'urgence du propriétaire</span>
+        </div>
+        <div class="check-item" onclick="toggle(this,'cl')">
+          <div class="check-box"></div>
+          <span class="check-label">J'ai lu les consignes de départ</span>
         </div>
       </div>
-    </section>
 
-    <!-- RÈGLES -->
-    <section class="section" id="regles">
-      <div class="section-head">
-        <div class="section-title">
-          <small>05 · Règles</small>
-          <h2>Pour un séjour parfait</h2>
-        </div>
-        <div class="section-chip">Respect du lieu & du voisinage</div>
-      </div>
-
-      <div class="rules">
-        <div class="rule"><div class="dot"></div><p><strong>Non-fumeur</strong> — Il est strictement interdit de fumer à l’intérieur du logement.</p></div>
-        <div class="rule"><div class="dot"></div><p><strong>Animaux</strong> — Les animaux de compagnie ne sont pas admis.</p></div>
-        <div class="rule"><div class="dot"></div><p><strong>Nuisances sonores</strong> — Merci de respecter la tranquillité entre 22h et 8h.</p></div>
-        <div class="rule"><div class="dot"></div><p><strong>Fêtes</strong> — Aucun évènement ou fête n’est autorisé.</p></div>
-        <div class="rule"><div class="dot"></div><p><strong>Logement</strong> — Merci de laisser le logement dans un état correct. Vaisselle faite avant le départ.</p></div>
-        <div class="rule"><div class="dot"></div><p><strong>Capacité</strong> — 2 personnes maximum.</p></div>
-        <div class="rule"><div class="dot"></div><p><strong>Clés</strong> — Remettez les clés dans la boîte à clés avant de partir.</p></div>
+      <div class="checklist-progress">
+        <span id="cl-count">0 / 7 étapes complétées</span>
+        <div class="progress-bar"><div class="progress-fill" id="cl-bar"></div></div>
       </div>
     </section>
 
-    <!-- AUTOUR -->
-    <section class="section" id="autour">
-      <div class="section-head">
-        <div class="section-title">
-          <small>06 · Autour de vous</small>
-          <h2>Nos bonnes adresses</h2>
-        </div>
-        <div class="section-chip">À pied · En voiture</div>
+    <!-- ── PHOTOS ── -->
+    <section class="section" id="photos">
+      <div class="section-header">
+        <div class="section-label">06 — Galerie</div>
+        <h2>Photos du logement</h2>
       </div>
 
-      <div class="grid-2">
-        <div class="card">
-          <h3>Courses & supermarchés</h3>
-          <div style="height:10px;"></div>
-          <div class="places">
-            <div class="place"><div class="p-emoji">🏪</div><div class="p-info"><div class="p-name">Carrefour City</div><div class="p-detail">Ouvert 7j/7 · 8h–22h</div></div><div class="p-dist">5 min</div></div>
-            <div class="place"><div class="p-emoji">🥖</div><div class="p-info"><div class="p-name">Boulangerie du Centre</div><div class="p-detail">Lun–Sam · 7h–19h30</div></div><div class="p-dist">3 min</div></div>
+      <div class="gallery-grid">
+        <!-- Photo principale / grande -->
+        <div class="gallery-item" onclick="lb('images/salon.jpg','Salon')">
+          <div class="gallery-placeholder">🛋️<span>Salon</span></div>
+          <!-- <img src="images/salon.jpg" alt="Salon"> -->
+          <div class="gallery-overlay">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+            </svg>
           </div>
         </div>
-
-        <div class="card">
-          <h3>Restaurants & bars</h3>
-          <div style="height:10px;"></div>
-          <div class="places">
-            <div class="place"><div class="p-emoji">🍷</div><div class="p-info"><div class="p-name">Le Bistrot de l’Officine</div><div class="p-detail">Cuisine française · Soir</div></div><div class="p-dist">8 min</div></div>
-            <div class="place"><div class="p-emoji">🍕</div><div class="p-info"><div class="p-name">Bella Napoli</div><div class="p-detail">Pizzas · Livraison</div></div><div class="p-dist">10 min</div></div>
-            <div class="place"><div class="p-emoji">☕</div><div class="p-info"><div class="p-name">Café de la Place</div><div class="p-detail">Terrasse · 8h–18h</div></div><div class="p-dist">4 min</div></div>
-          </div>
+        <!-- Photos secondaires -->
+        <div class="gallery-item" onclick="lb('images/chambre.jpg','Chambre')">
+          <div class="gallery-placeholder">🛏️<span>Chambre</span></div>
+          <!-- <img src="images/chambre.jpg" alt="Chambre"> -->
+          <div class="gallery-overlay"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+        </div>
+        <div class="gallery-item" onclick="lb('images/cuisine.jpg','Cuisine')">
+          <div class="gallery-placeholder">🍳<span>Cuisine</span></div>
+          <!-- <img src="images/cuisine.jpg" alt="Cuisine"> -->
+          <div class="gallery-overlay"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+        </div>
+        <div class="gallery-item" onclick="lb('images/sdb.jpg','Salle de bain')">
+          <div class="gallery-placeholder">🚿<span>Salle de bain</span></div>
+          <!-- <img src="images/sdb.jpg" alt="Salle de bain"> -->
+          <div class="gallery-overlay"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
         </div>
       </div>
 
-      <div style="height:14px;"></div>
-
-      <div class="card">
-        <h3>À faire aux alentours</h3>
-        <div style="height:10px;"></div>
-        <div class="places">
-          <div class="place"><div class="p-emoji">🌿</div><div class="p-info"><div class="p-name">Parc municipal</div><div class="p-detail">Idéal pour une balade</div></div><div class="p-dist">7 min</div></div>
-          <div class="place"><div class="p-emoji">🎬</div><div class="p-info"><div class="p-name">Cinéma le Palace</div><div class="p-detail">Séances tous les soirs</div></div><div class="p-dist">12 min</div></div>
-        </div>
-      </div>
+      <p style="font-size:0.72rem;color:var(--light-mid);margin-top:0.8rem;">
+        💡 Ajoutez vos photos dans le dossier <code>images/</code> puis décommentez les balises &lt;img&gt; dans le HTML.
+      </p>
     </section>
 
-    <!-- CONTACT -->
+    <!-- ── CONTACT ── -->
     <section class="section" id="contact">
-      <div class="section-head">
-        <div class="section-title">
-          <small>07 · Contact</small>
-          <h2>On est là pour vous</h2>
+      <div class="section-header">
+        <div class="section-label">07 — Contact</div>
+        <h2>Urgences & Contact</h2>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-label">📞 Propriétaire</div>
+          <div class="contact-value">[+33 X XX XX XX XX]</div>
+          <div class="contact-note">Disponible 9h – 20h · 7j/7</div>
         </div>
-        <div class="section-chip">Réponse rapide</div>
+        <div class="contact-card">
+          <div class="contact-label">🚨 Urgence 24h/24</div>
+          <div class="contact-value">[+33 X XX XX XX XX]</div>
+          <div class="contact-note">Pompiers 18 · SAMU 15 · Police 17</div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-label">📧 Email</div>
+          <div class="contact-value" style="font-size:0.95rem;">[votre@email.fr]</div>
+          <div class="contact-note">Réponse sous 2h en journée</div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-label">🔧 Dépannage</div>
+          <div class="contact-value" style="font-size:0.95rem;">[Plombier / Électricien]</div>
+          <div class="contact-note">[+33 X XX XX XX XX]</div>
+        </div>
       </div>
 
-      <div class="card">
-        <h3>Assistance</h3>
-        <p>Pour toute question avant, pendant ou après votre séjour, contactez-nous. Nous répondons rapidement.</p>
-      </div>
-
-      <div style="height:12px;"></div>
-
-      <div class="contacts">
-        <a class="contact" href="tel:+33600000000"><div class="c-ico">📞</div><div class="c-meta"><div class="c-name">Appel téléphonique</div><div class="c-detail">+33 6 00 00 00 00</div></div><div class="c-arrow">→</div></a>
-        <a class="contact" href="sms:+33600000000"><div class="c-ico">💬</div><div class="c-meta"><div class="c-name">SMS</div><div class="c-detail">Réponse rapide garantie</div></div><div class="c-arrow">→</div></a>
-        <a class="contact" href="https://wa.me/33600000000" target="_blank" rel="noopener"><div class="c-ico">🟢</div><div class="c-meta"><div class="c-name">WhatsApp</div><div class="c-detail">Message direct</div></div><div class="c-arrow">→</div></a>
-        <a class="contact" href="mailto:contact@lofficine.fr"><div class="c-ico">✉️</div><div class="c-meta"><div class="c-name">E-mail</div><div class="c-detail">contact@lofficine.fr</div></div><div class="c-arrow">→</div></a>
-      </div>
-
-      <div style="height:12px;"></div>
-
-      <div class="card">
-        <h3>Urgences</h3>
-        <ul>
-          <li>SAMU : <strong style="color:rgba(255,255,255,0.92);">15</strong></li>
-          <li>Police : <strong style="color:rgba(255,255,255,0.92);">17</strong></li>
-          <li>Pompiers : <strong style="color:rgba(255,255,255,0.92);">18</strong></li>
-          <li>Numéro européen : <strong style="color:rgba(255,255,255,0.92);">112</strong></li>
-        </ul>
+      <div class="form-box">
+        <div class="form-title">Envoyer un message</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" placeholder="Votre prénom" id="f-name">
+          </div>
+          <div class="form-group">
+            <label>Objet</label>
+            <select id="f-subject">
+              <option value="">-- Choisir --</option>
+              <option>Question générale</option>
+              <option>Problème technique</option>
+              <option>Problème d'accès</option>
+              <option>Urgence</option>
+              <option>Autre</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Décrivez votre demande..." id="f-msg"></textarea>
+        </div>
+        <button class="btn" id="send-btn" onclick="sendMsg()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          Envoyer
+        </button>
       </div>
     </section>
-
-    <!-- EXTRAS (rubrique + panier) -->
-    <section class="section" id="extras">
-      <div class="section-head">
-        <div class="section-title">
-          <small>08 · Extras</small>
-          <h2>Élevez l’expérience</h2>
-        </div>
-        <div class="section-chip">🍾 Ajoutez au panier</div>
-      </div>
-
-      <div class="extras-grid">
-        <!-- Produits -->
-        <div class="card">
-          <h3>Nos attentions</h3>
-          <p style="margin-bottom:12px;">Une sélection chic, livrée discrètement. Ajoutez au panier en 1 clic.</p>
-
-          <div class="product-grid" id="productGrid">
-
-            <!-- Produit 1 -->
-            <div class="product" data-id="champagne" data-name="Champagne" data-price="50">
-              <div class="media">🍾</div>
-              <div class="body">
-                <div class="name">Champagne</div>
-                <div class="desc">La touche luxe pour sublimer votre séjour. Bouteille 75cl, prête à savourer.</div>
-                <div class="row">
-                  <div class="price">50€</div>
-                  <button class="add" type="button" onclick="addToCart('champagne')">
-                    Ajouter
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M12 5v14"/><path d="M5 12h14"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Produit 2 -->
-            <div class="product" data-id="prosecco" data-name="Prosecco" data-price="25">
-              <div class="media">🥂</div>
-              <div class="body">
-                <div class="name">Prosecco</div>
-                <div class="desc">Fines bulles italiennes, fraîches et élégantes. Idéal pour démarrer en douceur.</div>
-                <div class="row">
-                  <div class="price">25€</div>
-                  <button class="add" type="button" onclick="addToCart('prosecco')">Ajouter
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M12 5v14"/><path d="M5 12h14"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Produit 3 -->
-            <div class="product" data-id="vin-blanc" data-name="Vin blanc (Coteaux du Giennois)" data-price="25">
-              <div class="media">🍷</div>
-              <div class="body">
-                <div class="name">Vin blanc (local)</div>
-                <div class="desc">Un Coteaux du Giennois blanc, délicat et élégant, parfait pour vos instants complices.</div>
-                <div class="row">
-                  <div class="price">25€</div>
-                  <button class="add" type="button" onclick="addToCart('vin-blanc')">Ajouter
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M12 5v14"/><path d="M5 12h14"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Produit 4 -->
-            <div class="product" data-id="petit-dej" data-name="Petit-déjeuner" data-price="35">
-              <div class="media">🥐</div>
-              <div class="body">
-                <div class="name">Petit-déjeuner</div>
-                <div class="desc">Déposé discrètement : café, thé, viennoiseries & douceur du matin.</div>
-                <div class="row">
-                  <div class="price">35€</div>
-                  <button class="add" type="button" onclick="addToCart('petit-dej')">Ajouter
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M12 5v14"/><path d="M5 12h14"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div style="height:14px;"></div>
-          <p class="muted-note">
-            Astuce : tu peux remplacer les emojis par des images (ex : <code style="color:rgba(255,255,255,0.75)">assets/champagne.jpg</code>).
-            Les prix sont indicatifs — modifiables.
-          </p>
-        </div>
-
-        <!-- Panier desktop -->
-        <aside class="card cart desktop" aria-label="Panier">
-          <div class="cart-head">
-            <h3>Panier</h3>
-            <span class="section-chip" style="padding:8px 10px;">Secure</span>
-          </div>
-          <div class="cart-list" id="cartListDesktop">
-            <div class="muted-note">Votre panier est vide. Ajoutez un extra pour commencer.</div>
-          </div>
-          <div class="cart-foot">
-            <div class="total">
-              <span>Total</span>
-              <strong id="cartTotalDesktop">0€</strong>
-            </div>
-            <button class="btn btn-primary checkout" type="button" onclick="checkout()">
-              Commander
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M6 6h15l-2 9H7L6 6Z"/><path d="M6 6 5 3H2"/>
-              </svg>
-            </button>
-            <div class="muted-note">
-              Après intégration Stripe : ce bouton redirige vers le paiement.
-              Pour l’instant, il affiche un récapitulatif.
-            </div>
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <footer>
-      <strong>L’Officine · Balnéo &amp; Pièce secrète</strong><br>
-      Merci pour votre confiance — nous espérons que ce séjour sera inoubliable.<br><br>
-      © 2026 L’Officine · Tous droits réservés
-    </footer>
 
   </main>
+</div>
 
-  <!-- Modal panier (mobile + bouton topbar) -->
-  <div class="modal" id="cartModal" role="dialog" aria-modal="true" aria-label="Panier">
-    <div class="sheet">
-      <div class="sheet-head">
-        <strong>Votre panier</strong>
-        <button class="close" type="button" onclick="closeCart()">Fermer</button>
-      </div>
-      <div class="sheet-body">
-        <div class="cart-list" id="cartListModal"></div>
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLb(event)">
+  <button class="lightbox-close" onclick="closeLb()">✕</button>
+  <img id="lb-img" src="" alt="">
+</div>
 
-        <div class="cart-foot">
-          <div class="total">
-            <span>Total</span>
-            <strong id="cartTotalModal">0€</strong>
-          </div>
-          <button class="btn btn-primary checkout" type="button" onclick="checkout()">Commander</button>
-          <div class="muted-note">Paiement Stripe à connecter (je te le branche quand tu veux).</div>
-        </div>
-      </div>
-    </div>
+<!-- FOOTER -->
+<footer class="page-footer">
+  <div class="footer-left">© 2025 — Appartement Clemenceau · Tous droits réservés</div>
+  <div class="footer-right">
+    <a href="#acces">Accès</a>
+    <a href="#wifi">WiFi</a>
+    <a href="#contact">Contact</a>
   </div>
+</footer>
 
-  <script>
-    /* ───────────────────────── Splash ───────────────────────── */
-    const splash = document.getElementById("splash");
-    const enterBtn = document.getElementById("enterBtn");
-
-    function hideSplash(){
-      if (!splash) return;
-      splash.classList.add("is-hidden");
-      splash.setAttribute("aria-hidden", "true");
-      setTimeout(()=> splash.style.display = "none", 750);
-      try { localStorage.setItem("lofficine_splash_seen", "1"); } catch(e){}
-    }
-
-    function hideSplashAndScrollTo(id){
-      hideSplash();
-      setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior:"smooth", block:"start" }), 80);
-    }
-
-    // Affiche le splash 1 fois (ou enlève ce bloc si tu veux l’avoir à chaque ouverture)
-    (function initSplash(){
-      let seen = "0";
-      try { seen = localStorage.getItem("lofficine_splash_seen") || "0"; } catch(e){}
-      if (seen === "1") {
-        splash.classList.add("is-hidden");
-        splash.setAttribute("aria-hidden", "true");
-        setTimeout(()=> splash.style.display = "none", 10);
-      }
-    })();
-
-    enterBtn?.addEventListener("click", hideSplash);
-
-    /* ───────────────────────── Nav active (fluide) ───────────────────────── */
-    const navLinks = Array.from(document.querySelectorAll(".nav a"));
-    const sections = Array.from(document.querySelectorAll(".section"));
-
-    const io = new IntersectionObserver((entries)=>{
-      const visible = entries.filter(e => e.isIntersecting).sort((a,b)=> b.intersectionRatio - a.intersectionRatio)[0];
-      if(!visible) return;
-      navLinks.forEach(a => a.classList.remove("active"));
-      const active = document.querySelector(`.nav a[href="#${visible.target.id}"]`);
-      if(active) active.classList.add("active");
-    }, { rootMargin: "-35% 0px -55% 0px", threshold: [0.15, 0.25, 0.35, 0.5] });
-
-    sections.forEach(s => io.observe(s));
-
-    /* ───────────────────────── Copier texte ───────────────────────── */
-    function copyText(text, btn){
-      navigator.clipboard.writeText(text).then(()=>{
-        const orig = btn.textContent;
-        btn.textContent = "✓ Copié";
-        btn.style.borderColor = "rgba(200,17,31,0.45)";
-        btn.style.background = "rgba(200,17,31,0.12)";
-        setTimeout(()=>{
-          btn.textContent = orig;
-          btn.style.borderColor = "";
-          btn.style.background = "";
-        }, 1600);
-      }).catch(()=>{});
-    }
-
-    /* ───────────────────────── Extras / Panier ───────────────────────── */
-    const products = (() => {
-      const nodes = Array.from(document.querySelectorAll(".product"));
-      const map = {};
-      nodes.forEach(n => {
-        const id = n.dataset.id;
-        map[id] = {
-          id,
-          name: n.dataset.name,
-          price: Number(n.dataset.price || 0)
-        };
-      });
-      return map;
-    })();
-
-    const cart = {}; // {id: qty}
-
-    const cartCountEl = document.getElementById("cartCount");
-    const cartListDesktop = document.getElementById("cartListDesktop");
-    const cartListModal = document.getElementById("cartListModal");
-    const cartTotalDesktop = document.getElementById("cartTotalDesktop");
-    const cartTotalModal = document.getElementById("cartTotalModal");
-
-    function cartCount(){
-      return Object.values(cart).reduce((a,b)=> a+b, 0);
-    }
-    function cartTotal(){
-      return Object.entries(cart).reduce((sum, [id, qty]) => {
-        const p = products[id];
-        return sum + (p ? p.price * qty : 0);
-      }, 0);
-    }
-
-    function addToCart(id){
-      if(!products[id]) return;
-      cart[id] = (cart[id] || 0) + 1;
-      renderCart();
-      // micro feedback
-      try { navigator.vibrate?.(20); } catch(e){}
-    }
-
-    function decFromCart(id){
-      if(!cart[id]) return;
-      cart[id] -= 1;
-      if(cart[id] <= 0) delete cart[id];
-      renderCart();
-    }
-
-    function incToCart(id){
-      if(!products[id]) return;
-      cart[id] = (cart[id] || 0) + 1;
-      renderCart();
-    }
-
-    function renderCart(){
-      const count = cartCount();
-      cartCountEl.textContent = String(count);
-
-      const total = cartTotal();
-      cartTotalDesktop.textContent = `${total}€`;
-      cartTotalModal.textContent = `${total}€`;
-
-      const items = Object.entries(cart);
-      const emptyHtml = `<div class="muted-note">Votre panier est vide. Ajoutez un extra pour commencer.</div>`;
-
-      const html = items.length
-        ? items.map(([id, qty]) => {
-            const p = products[id];
-            const line = p.price * qty;
-            return `
-              <div class="cart-item">
-                <div class="left">
-                  <div class="ttl">${escapeHtml(p.name)}</div>
-                  <div class="sub">${p.price}€ · ${line}€</div>
-                </div>
-                <div class="qty" aria-label="Quantité">
-                  <button type="button" onclick="decFromCart('${id}')">−</button>
-                  <span>${qty}</span>
-                  <button type="button" onclick="incToCart('${id}')">+</button>
-                </div>
-              </div>
-            `;
-          }).join("")
-        : emptyHtml;
-
-      cartListDesktop.innerHTML = html;
-      cartListModal.innerHTML = html;
-    }
-
-    function escapeHtml(str){
-      return String(str).replace(/[&<>"']/g, (m)=>({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-
-    /* ───────────────────────── Panier modal (mobile) ───────────────────────── */
-    const cartModal = document.getElementById("cartModal");
-    const openCartBtn = document.getElementById("openCartBtn");
-
-    function openCart(){
-      cartModal.classList.add("open");
-      document.body.style.overflow = "hidden";
-    }
-    function closeCart(){
-      cartModal.classList.remove("open");
-      document.body.style.overflow = "";
-    }
-    openCartBtn?.addEventListener("click", () => {
-      // sur desktop, laisse l’aside faire le job ; sur mobile ouvre le modal
-      if (window.matchMedia("(max-width: 900px)").matches) openCart();
-      else document.getElementById("extras")?.scrollIntoView({behavior:"smooth"});
-    });
-
-    cartModal?.addEventListener("click", (e)=>{
-      if(e.target === cartModal) closeCart();
-    });
-    window.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape") closeCart();
-    });
-
-    /* ───────────────────────── Checkout (placeholder) ───────────────────────── */
-    function checkout(){
-      const items = Object.entries(cart).map(([id, qty]) => {
-        const p = products[id];
-        return `${p.name} x${qty} (${p.price}€)`;
-      });
-
-      if(!items.length){
-        alert("Votre panier est vide 🙂");
-        return;
-      }
-
-      const total = cartTotal();
-      alert(
-        "Récapitulatif commande :\n\n" +
-        items.join("\n") +
-        `\n\nTotal : ${total}€\n\n` +
-        "👉 Quand tu veux, je remplace cette alerte par une redirection Stripe Checkout."
-      );
-    }
-
-    // Init
-    renderCart();
-  </script>
+<script src="js/app.js"></script>
 </body>
 </html>
