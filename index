@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Livret d'accueil · L'Officine</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body, html { overflow-x: hidden; }
+    :root {
+      --bg: #07070A; --red: #C8111F; --red-2: #A00E19; --red-3: #E01020;
+      --text: rgba(255,255,255,0.92); --muted: rgba(255,255,255,0.65);
+      --soft: rgba(255,255,255,0.40); --border: rgba(255,255,255,0.10);
+      --max: 780px; --radius: 16px;
+    }
+    body { font-family: "DM Sans", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* COVER */
+    .cover { position: relative; height: 100svh; min-height: 560px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 60px; overflow: hidden; }
+    .cover-photo { position: absolute; inset: 0; background: url('IMG_9904.JPG') center center / cover no-repeat; }
+    .cover-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,7,10,0.20) 0%, rgba(7,7,10,0.40) 40%, rgba(7,7,10,0.88) 80%, rgba(7,7,10,1.00) 100%); }
+    .cover-content { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 0 24px; }
+    .cover-eyebrow { font-size: 0.70rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.60); display: flex; align-items: center; gap: 10px; }
+    .cover-eyebrow::before, .cover-eyebrow::after { content: ''; display: block; width: 28px; height: 1px; background: rgba(255,255,255,0.30); }
+    .cover h1 { font-family: "Playfair Display", serif; font-size: clamp(2.8rem, 8vw, 5rem); font-weight: 700; line-height: 1.0; letter-spacing: 0.01em; }
+    .cover h1 em { font-style: italic; color: rgba(255,255,255,0.70); }
+    .cover-sub { font-size: 1rem; color: var(--muted); font-weight: 300; letter-spacing: 0.05em; }
+    .scroll-hint { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(255,255,255,0.40); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; animation: bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(5px)} }
+
+    /* NAV */
+    .nav-sticky { position: sticky; top: 0; z-index: 100; background: rgba(7,7,10,0.85); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .nav-inner { max-width: var(--max); margin: 0 auto; padding: 0 18px; display: flex; align-items: center; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-item { flex-shrink: 0; padding: 14px 14px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: color .18s, border-color .18s; white-space: nowrap; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { color: var(--text); border-bottom-color: var(--red); }
+
+    /* CONTENT */
+    .content { max-width: var(--max); margin: 0 auto; padding: 0 18px 80px; }
+    .section { padding: 56px 0 0; scroll-margin-top: 52px; }
+    .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+    .section-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; background: rgba(200,17,31,0.12); border: 1px solid rgba(200,17,31,0.25); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .section-title { font-family: "Playfair Display", serif; font-size: 1.55rem; font-weight: 600; letter-spacing: 0.01em; }
+    .section-title small { display: block; font-family: "DM Sans", sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+
+    /* CARDS */
+    .card { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 14px; }
+    .card-title { font-family: "Playfair Display", serif; font-size: 1.05rem; margin-bottom: 8px; }
+    .card p, .card li { font-size: 0.95rem; color: var(--muted); line-height: 1.7; }
+    .card ul, .card ol { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+
+    /* INFO GRID */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .info-cell { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+    .info-cell .label { font-size: 0.70rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); margin-bottom: 6px; }
+    .info-cell .value { font-family: "Playfair Display", serif; font-size: 1.25rem; color: var(--text); }
+    .info-cell .value.red { color: var(--red-3); }
+
+    /* HIGHLIGHT */
+    .highlight { background: linear-gradient(135deg, rgba(200,17,31,0.10), rgba(200,17,31,0.05)); border: 1px solid rgba(200,17,31,0.25); border-radius: var(--radius); padding: 22px; margin-bottom: 14px; }
+    .highlight .hl-icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
+    .highlight .hl-title { font-family: "Playfair Display", serif; font-size: 1.1rem; margin-bottom: 8px; }
+    .highlight p { font-size: 0.95rem; color: var(--muted); line-height: 1.7; }
+
+    /* STEPS */
+    .step-list { display: flex; flex-direction: column; gap: 12px; }
+    .step { display: flex; gap: 16px; align-items: flex-start; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+    .step-num { width: 28px; height: 28px; border-radius: 999px; flex-shrink: 0; background: linear-gradient(135deg, var(--red), var(--red-2)); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 900; color: white; }
+    .step-body .step-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+    .step-body p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+    /* CONTACTS */
+    .contact-grid { display: flex; flex-direction: column; gap: 12px; }
+    .contact-card { display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-decoration: none; color: inherit; transition: border-color .18s, background .18s; }
+    .contact-card:hover { border-color: rgba(200,17,31,0.35); background: rgba(200,17,31,0.06); }
+    .contact-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; background: rgba(200,17,31,0.12); border: 1px solid rgba(200,17,31,0.25); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .contact-info .contact-name { font-weight: 700; font-size: 0.95rem; }
+    .contact-info .contact-detail { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+    .contact-arrow { margin-left: auto; color: var(--soft); font-size: 1rem; }
+
+    /* GALLERY */
+    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+    .gallery-item { aspect-ratio: 1; border-radius: 10px; overflow: hidden; cursor: pointer; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s ease; }
+    .gallery-item:hover img { transform: scale(1.05); }
+
+    /* RULES */
+    .rule-list { display: flex; flex-direction: column; gap: 10px; }
+    .rule { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; }
+    .rule-dot { width: 8px; height: 8px; border-radius: 999px; flex-shrink: 0; background: var(--red); margin-top: 7px; }
+    .rule p { font-size: 0.93rem; color: var(--muted); line-height: 1.6; }
+    .rule p strong { color: var(--text); font-weight: 700; }
+
+    /* MAP */
+    .map-box { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius); height: 200px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: var(--soft); font-size: 0.88rem; margin-bottom: 14px; overflow: hidden; }
+    .map-box iframe { width: 100%; height: 100%; border: none; border-radius: var(--radius); filter: grayscale(1) invert(0.85) contrast(0.9); }
+
+    /* PLACES */
+    .place-list { display: flex; flex-direction: column; gap: 10px; }
+    .place { display: flex; gap: 14px; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; }
+    .place-emoji { font-size: 1.3rem; flex-shrink: 0; }
+    .place-info { flex: 1; min-width: 0; }
+    .place-name { font-weight: 700; font-size: 0.93rem; }
+    .place-detail { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+    .place-dist { font-size: 0.78rem; color: var(--soft); white-space: nowrap; }
+
+    /* WIFI */
+    .wifi-box { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .wifi-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .wifi-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); margin-bottom: 4px; }
+    .wifi-value { font-family: "Playfair Display", serif; font-size: 1.2rem; color: var(--text); }
+    .copy-btn { padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(200,17,31,0.35); background: rgba(200,17,31,0.10); color: rgba(255,255,255,0.80); font-size: 0.80rem; font-weight: 700; cursor: pointer; transition: background .15s; white-space: nowrap; }
+    .copy-btn:hover { background: rgba(200,17,31,0.20); }
+
+    /* DIVIDER */
+    .divider { height: 1px; margin: 40px 0 0; background: linear-gradient(90deg, transparent, rgba(200,17,31,0.40), transparent); }
+
+    /* EXTRAS CTA */
+    .extras-cta { background: linear-gradient(135deg, rgba(200,17,31,0.14), rgba(200,17,31,0.07)); border: 1px solid rgba(200,17,31,0.28); border-radius: var(--radius); padding: 28px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .extras-cta h3 { font-family: "Playfair Display", serif; font-size: 1.35rem; }
+    .extras-cta p { font-size: 0.92rem; color: var(--muted); max-width: 420px; line-height: 1.7; }
+    .extras-cta a { display: inline-block; padding: 13px 28px; border-radius: 999px; background: linear-gradient(135deg, var(--red), var(--red-2)); color: white; font-weight: 800; font-size: 0.95rem; text-decoration: none; box-shadow: 0 12px 40px rgba(200,17,31,0.25); transition: transform .15s, filter .15s; }
+    .extras-cta a:hover { transform: translateY(-2px); filter: brightness(1.07); }
+
+    /* FOOTER */
+    footer { text-align: center; padding: 40px 24px; color: var(--soft); font-size: 0.82rem; line-height: 1.8; border-top: 1px solid var(--border); }
+    footer strong { color: var(--muted); }
+
+    @media (max-width: 520px) {
+      .cover h1 { font-size: 2.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-photo"></div>
+    <div class="cover-overlay"></div>
+    <div class="cover-content">
+      <div class="cover-eyebrow">Livret d'accueil</div>
+      <h1>L'Officine<br><em>Balnéo & Pièce secrète</em></h1>
+      <p class="cover-sub">Bienvenue dans votre havre d'intimité</p>
+    </div>
+    <div class="scroll-hint">
+      <svg width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      Découvrir
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav-sticky">
+    <div class="nav-inner">
+      <a class="nav-item" href="#bienvenue">Bienvenue</a>
+      <a class="nav-item" href="#acces">Accès</a>
+      <a class="nav-item" href="#logement">Logement</a>
+      <a class="nav-item" href="#wifi">Wi-Fi</a>
+      <a class="nav-item" href="#regles">Règles</a>
+      <a class="nav-item" href="#autour">Autour</a>
+      <a class="nav-item" href="#contact">Contact</a>
+      <a class="nav-item" href="#extras">Extras</a>
+    </div>
+  </nav>
+
+  <div class="content">
+
+    <!-- 01 BIENVENUE -->
+    <section class="section" id="bienvenue">
+      <div class="section-header">
+        <div class="section-icon">🖤</div>
+        <div class="section-title"><small>01 · Bienvenue</small>Un séjour qui vous ressemble</div>
+      </div>
+      <div class="highlight">
+        <span class="hl-icon">✦</span>
+        <div class="hl-title">Merci de nous faire confiance</div>
+        <p>Nous sommes ravis de vous accueillir à L'Officine — un espace pensé pour l'intimité, le plaisir et l'évasion. Ce livret contient tout ce dont vous avez besoin pour profiter pleinement de votre séjour. N'hésitez pas à nous contacter pour la moindre question.</p>
+      </div>
+      <div class="info-grid">
+        <div class="info-cell"><div class="label">Arrivée</div><div class="value">17h00</div></div>
+        <div class="info-cell"><div class="label">Départ</div><div class="value">10h00</div></div>
+        <div class="info-cell"><div class="label">Capacité</div><div class="value">2 personnes</div></div>
+        <div class="info-cell"><div class="label">Superficie</div><div class="value red">∼ 60 m²</div></div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 02 ACCÈS -->
+    <section class="section" id="acces">
+      <div class="section-header">
+        <div class="section-icon">🔑</div>
+        <div class="section-title"><small>02 · Accès</small>Comment entrer</div>
+      </div>
+      <div class="step-list">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Adresse du logement</div>
+            <p>XX Rue de l'Officine, XXXXX Ville<br><span style="color:rgba(255,255,255,0.40);font-size:0.82rem;">→ Remplacez par votre adresse exacte</span></p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Boîte à clés</div>
+            <p>La boîte à clés se situe à l'entrée. Code : <strong style="color:white">XXXX</strong><br><span style="color:rgba(255,255,255,0.40);font-size:0.82rem;">→ Remplacez par votre code</span></p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Entrée dans le logement</div>
+            <p>Montez au <strong style="color:white">2ème étage</strong>, appartement face à l'ascenseur. Utilisez la clé récupérée.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Parking</div>
+            <p>Parking gratuit disponible dans la rue ou au parking public à 200m.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="map-box">
+          <span style="font-size:2rem">📍</span>
+          <span>Intégrez ici votre carte Google Maps</span>
+          <span style="font-size:0.75rem;opacity:0.5">Maps → Partager → Intégrer une carte → copier l'iframe</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 03 LOGEMENT -->
+    <section class="section" id="logement">
+      <div class="section-header">
+        <div class="section-icon">🏠</div>
+        <div class="section-title"><small>03 · Le logement</small>Tout ce qu'il faut savoir</div>
+      </div>
+      <div class="gallery">
+        <div class="gallery-item"><img src="IMG_9904.JPG" alt="Pièce principale" loading="lazy"></div>
+        <div class="gallery-item"><img src="IMG_8312.jpg" alt="Balnéo" loading="lazy"></div>
+        <div class="gallery-item"><img src="IMG_8657.JPG" alt="Détail" loading="lazy"></div>
+        <div class="gallery-item"><img src="IMG_8660.JPG" alt="Ambiance" loading="lazy"></div>
+        <div class="gallery-item"><img src="IMG_8673.JPG" alt="Chambre" loading="lazy"></div>
+        <div class="gallery-item"><img src="IMG_9166.jpg" alt="Vue" loading="lazy"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🛁 Le bain balnéo</div>
+        <p>Réglez la température via le panneau de commande. Recommandée : <strong style="color:white">38–40°C</strong>. Les jets se contrôlent indépendamment. Pensez à éteindre après usage.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🕯️ L'éclairage & l'ambiance</div>
+        <p>Les lumières sont pilotables via les interrupteurs au mur ou la télécommande sur la commode. Plusieurs scènes d'ambiance sont disponibles.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🎵 La musique</div>
+        <p>Enceinte Bluetooth disponible. Connexion : <strong style="color:white">Officine-Sound</strong> — aucun code requis.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">📺 La télévision</div>
+        <p>Accès Netflix, Prime Video et YouTube via la Smart TV. Pensez à vous déconnecter avant de partir.</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 04 WIFI -->
+    <section class="section" id="wifi">
+      <div class="section-header">
+        <div class="section-icon">📶</div>
+        <div class="section-title"><small>04 · Wi-Fi</small>Connexion internet</div>
+      </div>
+      <div class="wifi-box">
+        <div class="wifi-row">
+          <div><div class="wifi-label">Réseau</div><div class="wifi-value">L-Officine</div></div>
+          <button class="copy-btn" onclick="copyText('L-Officine', this)">Copier</button>
+        </div>
+        <div style="height:1px;background:var(--border);"></div>
+        <div class="wifi-row">
+          <div><div class="wifi-label">Mot de passe</div><div class="wifi-value">officine2024</div></div>
+          <button class="copy-btn" onclick="copyText('officine2024', this)">Copier</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 05 RÈGLES -->
+    <section class="section" id="regles">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <div class="section-title"><small>05 · Règles</small>Pour un séjour parfait</div>
+      </div>
+      <div class="rule-list">
+        <div class="rule"><div class="rule-dot"></div><p><strong>Non-fumeur</strong> — Il est strictement interdit de fumer à l'intérieur du logement.</p></div>
+        <div class="rule"><div class="rule-dot"></div><p><strong>Animaux</strong> — Les animaux de compagnie ne sont pas admis dans le logement.</p></div>
+        <div class="rule"><div class="rule-dot"></div><p><strong>Nuisances sonores</strong> — Merci de respecter la tranquillité du voisinage entre 22h et 8h.</p></div>
+        <div class="rule"><div class="rule-dot"></div><p><strong>Fêtes</strong> — Aucun évènement ou fête n'est autorisé dans le logement.</p></div>
+        <div class="rule"><div class="rule-dot"></div><p><strong>Logement</strong> — Merci de laisser le logement dans un état correct. La vaisselle doit être faite avant le départ.</p></div>
+        <div class="rule"><div class="rule-dot"></div><p><strong>Capacité</strong> — Le logement est prévu pour 2 personnes maximum.</p></div>
+        <div class="rule"><div class="rule-dot"></div><p><strong>Clés</strong> — Remettez les clés dans la boîte à clés avant de partir.</p></div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 06 AUTOUR -->
+    <section class="section" id="autour">
+      <div class="section-header">
+        <div class="section-icon">📍</div>
+        <div class="section-title"><small>06 · Autour de vous</small>Nos bonnes adresses</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;">🛒 Courses & supermarchés</div>
+        <div class="place-list">
+          <div class="place"><span class="place-emoji">🏪</span><div class="place-info"><div class="place-name">Carrefour City</div><div class="place-detail">Ouvert 7j/7 · 8h–22h</div></div><span class="place-dist">5 min à pied</span></div>
+          <div class="place"><span class="place-emoji">🥖</span><div class="place-info"><div class="place-name">Boulangerie du Centre</div><div class="place-detail">Lun–Sam · 7h–19h30</div></div><span class="place-dist">3 min</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;">🍽️ Restaurants & bars</div>
+        <div class="place-list">
+          <div class="place"><span class="place-emoji">🍷</span><div class="place-info"><div class="place-name">Le Bistrot de l'Officine</div><div class="place-detail">Cuisine française · Soir uniquement</div></div><span class="place-dist">8 min</span></div>
+          <div class="place"><span class="place-emoji">🍕</span><div class="place-info"><div class="place-name">Bella Napoli</div><div class="place-detail">Pizzas · Livraison disponible</div></div><span class="place-dist">10 min</span></div>
+          <div class="place"><span class="place-emoji">☕</span><div class="place-info"><div class="place-name">Café de la Place</div><div class="place-detail">Terrasse · 8h–18h</div></div><span class="place-dist">4 min</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;">🎭 À faire aux alentours</div>
+        <div class="place-list">
+          <div class="place"><span class="place-emoji">🌿</span><div class="place-info"><div class="place-name">Parc municipal</div><div class="place-detail">Idéal pour une balade</div></div><span class="place-dist">7 min</span></div>
+          <div class="place"><span class="place-emoji">🎬</span><div class="place-info"><div class="place-name">Cinéma le Palace</div><div class="place-detail">Séances tous les soirs</div></div><span class="place-dist">12 min</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 07 CONTACT -->
+    <section class="section" id="contact">
+      <div class="section-header">
+        <div class="section-icon">💬</div>
+        <div class="section-title"><small>07 · Contact</small>On est là pour vous</div>
+      </div>
+      <div class="highlight" style="margin-bottom:18px;">
+        <p>Pour toute question avant, pendant ou après votre séjour, n'hésitez pas à nous contacter. Nous répondons rapidement !</p>
+      </div>
+      <div class="contact-grid">
+        <a class="contact-card" href="tel:+33600000000"><div class="contact-icon">📞</div><div class="contact-info"><div class="contact-name">Appel téléphonique</div><div class="contact-detail">+33 6 00 00 00 00</div></div><span class="contact-arrow">→</span></a>
+        <a class="contact-card" href="sms:+33600000000"><div class="contact-icon">💬</div><div class="contact-info"><div class="contact-name">SMS</div><div class="contact-detail">Réponse rapide garantie</div></div><span class="contact-arrow">→</span></a>
+        <a class="contact-card" href="https://wa.me/33600000000" target="_blank"><div class="contact-icon">🟢</div><div class="contact-info"><div class="contact-name">WhatsApp</div><div class="contact-detail">Message direct</div></div><span class="contact-arrow">→</span></a>
+        <a class="contact-card" href="mailto:contact@lofficine.fr"><div class="contact-icon">✉️</div><div class="contact-info"><div class="contact-name">E-mail</div><div class="contact-detail">contact@lofficine.fr</div></div><span class="contact-arrow">→</span></a>
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <div class="card-title">🚨 Urgences</div>
+        <ul>
+          <li>SAMU : <strong style="color:white">15</strong></li>
+          <li>Police : <strong style="color:white">17</strong></li>
+          <li>Pompiers : <strong style="color:white">18</strong></li>
+          <li>Numéro européen : <strong style="color:white">112</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 08 EXTRAS -->
+    <section class="section" id="extras">
+      <div class="section-header">
+        <div class="section-icon">✨</div>
+        <div class="section-title"><small>08 · Extras</small>Élevez l'expérience</div>
+      </div>
+      <div class="extras-cta">
+        <div style="font-size:2rem">🍾</div>
+        <h3>Ajoutez une touche de désir</h3>
+        <p>Champagne au frais, petit-déjeuner au lit, départ sans hâte… Composez votre séjour comme vous l'imaginez.</p>
+        <a href="index.html">Découvrir mes extras →</a>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <strong>L'Officine · Balnéo &amp; Pièce secrète</strong><br>
+    Merci pour votre confiance — nous espérons que ce séjour sera inoubliable.<br><br>
+    © 2026 L'Officine · Tous droits réservés
+  </footer>
+
+  <script>
+    const sections = document.querySelectorAll('.section');
+    const navItems = document.querySelectorAll('.nav-item');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navItems.forEach(n => n.classList.remove('active'));
+          const active = document.querySelector(`.nav-item[href="#${e.target.id}"]`);
+          if (active) { active.classList.add('active'); active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(s => observer.observe(s));
+
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copié';
+        setTimeout(() => btn.textContent = orig, 1800);
+      });
+    }
+  </script>
+</body>
+</html>
